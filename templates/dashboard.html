@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard">
+
+    <h1>Welcome, {{ current_user.username }} 👋</h1>
+
+    <div class="stats">
+        <div class="card">
+            <h2>{{ total }}</h2>
+            <p>Total Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ completed }}</h2>
+            <p>Completed</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ pending }}</h2>
+            <p>Pending</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ productivity }}%</h2>
+            <p>Productivity</p>
+        </div>
+    </div>
+
+    <div class="task-form">
+        <h2>Add New Task ✨</h2>
+
+        <form method="POST" action="{{ url_for('add_task') }}">
+            <input type="text" name="title" placeholder="Task Title" required>
+
+            <textarea name="description" placeholder="Description"></textarea>
+
+            <select name="priority">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+            </select>
+
+            <input type="date" name="due_date">
+
+            <button type="submit">➕ Add Task</button>
+        </form>
+    </div>
+
+    <button class="ai-btn" onclick="getSuggestion()">
+        🤖 AI Suggest Next Task
+    </button>
+
+    <div class="reset-buttons">
+        <a href="{{ url_for('clear_tasks') }}"
+           onclick="return confirm('Clear all tasks? Productivity will remain safe.')"
+           class="danger-btn">
+            🗑 Clear Tasks
+        </a>
+
+        <a href="{{ url_for('full_reset') }}"
+           onclick="return confirm('Full reset? This will delete tasks and reset productivity to 0%.')"
+           class="reset-btn">
+            🔄 Full Reset
+        </a>
+    </div>
+
+    <div id="aiResult"></div>
+
+    <div class="task-list">
+        {% for task in tasks %}
+
+        <div class="task-card {{ task.priority.lower() }} {% if task.status == 'Completed' %}completed{% endif %}">
+            <h3>{{ task.title }}</h3>
+
+            <p>{{ task.description }}</p>
+
+            <p><strong>Priority:</strong> {{ task.priority }}</p>
+            <p><strong>Due:</strong> {{ task.due_date }}</p>
+            <p><strong>Status:</strong> {{ task.status }}</p>
+
+            <div class="buttons">
+                {% if task.status == "Pending" %}
+                <a href="{{ url_for('complete_task', task_id=task.id) }}"
+                   class="complete-btn"
+                   onclick="completeAnimation(event, this)">
+                    ✅ Mark Complete
+                </a>
+                {% else %}
+                <span class="done-badge">🎉 Completed</span>
+                {% endif %}
+
+                <a href="{{ url_for('edit_task', task_id=task.id) }}">
+                    ✏️ Edit
+                </a>
+
+                <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                   onclick="return confirm('Delete task? Productivity history will remain safe.')">
+                    🗑 Delete
+                </a>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

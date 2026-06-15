@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>Welcome Back 👋</h1>
+        <p>Login to manage your tasks smartly</p>
+
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email Address" required>
+
+            <div class="password-box">
+                <input type="password" name="password" id="loginPassword" placeholder="Password" required>
+                <span onclick="togglePassword('loginPassword')">👁️</span>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p class="switch-text">
+            New user?
+            <a href="{{ url_for('register') }}">Create account</a>
+        </p>
+    </div>
+</div>
+
+{% endblock %}
